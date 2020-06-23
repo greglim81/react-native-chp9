@@ -5,25 +5,15 @@ import { Text, Container, Header, Item, Input, Button } from 'native-base';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import uuid from 'uuid-random';
 
-export default function ToDoList() {
-    // receive state and dispatch from App.js
+export default function ToDoList({navigation}) {
     const {state, dispatch} = useContext(TodosContext); 
-    const [todoText, setTodoText] = useState("")
-    const [editMode, setEditMode] = useState(false)    
-    const [editTodo, setEditTodo] = useState(null)    
-    const buttonTitle = editMode ? "Edit" : "Add";
+    const [todoText, setTodoText] = useState("")    
+    const buttonTitle = "Add";
 
     const handleSubmit = () =>{
-        if(editMode){            
-            dispatch({type: 'edit', payload:{...editTodo,text:todoText}})
-            setEditMode(false)
-            setEditTodo(null)
-        }
-        else{
-            const newToDo = {id: uuid(), text: todoText};
-            dispatch({type: 'add', payload: newToDo})
-        }              
-        setTodoText('') // to clear field after adding     
+        const newToDo = {id: uuid(), text: todoText};
+        dispatch({type: 'add', payload: newToDo});
+        setTodoText('');        
     }
 
     const renderItem = data => (
@@ -51,12 +41,10 @@ export default function ToDoList() {
     };
 
     const editRow = (todo,rowMap) => {        
-        setTodoText(todo.text)
-        setEditMode(true)
-        setEditTodo(todo)
         if (rowMap[todo.id]) {
             rowMap[todo.id].closeRow();
         }        
+        navigation.navigate('ToDoDetail', todo)             
     };
 
     return (
